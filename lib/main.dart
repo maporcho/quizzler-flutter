@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'question.dart';
+import 'quiz_brain.dart';
+
+QuizBrain quizBrain = QuizBrain();
 
 void main() => runApp(Quizzler());
 
@@ -31,16 +33,8 @@ class _QuizPageState extends State<QuizPage> {
 
   int questionNumber = 0;
 
-  List<Question> questions = [
-    Question('You can lead a cow down stairs but not up stairs.', false),
-    Question('Approximately one quarter of human bones are in the feet.', true),
-    Question('A slug\'s blood is green.', true)
-  ];
-
   @override
   Widget build(BuildContext context) {
-    Question question = questions[questionNumber];
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -51,7 +45,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                question.questionText,
+                quizBrain.questions[questionNumber].questionText,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -78,17 +72,19 @@ class _QuizPageState extends State<QuizPage> {
               onPressed: () {
                 //The user picked true.
                 setState(() {
-                  scoreKeeper.add(question.questionAnswer
-                      ? Icon(
-                          Icons.check,
-                          color: Colors.green,
-                        )
-                      : Icon(
-                          Icons.close,
-                          color: Colors.red,
-                        ));
+                  scoreKeeper
+                      .add(quizBrain.questions[questionNumber].questionAnswer
+                          ? Icon(
+                              Icons.check,
+                              color: Colors.green,
+                            )
+                          : Icon(
+                              Icons.close,
+                              color: Colors.red,
+                            ));
 
-                  questionNumber = ++questionNumber % questions.length;
+                  questionNumber =
+                      ++questionNumber % quizBrain.questions.length;
                 });
               },
             ),
@@ -110,17 +106,19 @@ class _QuizPageState extends State<QuizPage> {
               onPressed: () {
                 //The user picked false.
                 setState(() {
-                  scoreKeeper.add(!question.questionAnswer
-                      ? Icon(
-                          Icons.check,
-                          color: Colors.green,
-                        )
-                      : Icon(
-                          Icons.close,
-                          color: Colors.red,
-                        ));
+                  scoreKeeper
+                      .add(!quizBrain.questions[questionNumber].questionAnswer
+                          ? Icon(
+                              Icons.check,
+                              color: Colors.green,
+                            )
+                          : Icon(
+                              Icons.close,
+                              color: Colors.red,
+                            ));
 
-                  questionNumber = ++questionNumber % questions.length;
+                  questionNumber =
+                      ++questionNumber % quizBrain.questions.length;
                 });
               },
             ),
