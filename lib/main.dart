@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 import 'quiz_brain.dart';
 
@@ -30,6 +31,54 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   List<Icon> scoreKeeper = [];
+
+  void checkAnswer(bool userPickedAnswer) {
+    bool correctAnwer = quizBrain.getCorrectAnswer();
+    setState(() {
+      if (userPickedAnswer == correctAnwer) {
+        scoreKeeper.add(Icon(
+          Icons.check,
+          color: Colors.green,
+        ));
+      } else {
+        scoreKeeper.add(Icon(
+          Icons.close,
+          color: Colors.red,
+        ));
+      }
+
+      if (quizBrain.hasNextQuestion())
+        quizBrain.nextQuestion();
+      else
+        endQuiz();
+    });
+  }
+
+  void endQuiz() {
+    Alert(
+      context: context,
+      type: AlertType.success,
+      title: "The End",
+      desc: "This is the end of the quiz. Thanks for playing!",
+      buttons: [
+        DialogButton(
+          child: Text(
+            "OK",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          width: 120,
+        )
+      ],
+    ).show();
+
+    setState(() {
+      scoreKeeper.clear();
+      quizBrain.reset();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,17 +119,7 @@ class _QuizPageState extends State<QuizPage> {
               onPressed: () {
                 //The user picked true.
                 setState(() {
-                  scoreKeeper.add(quizBrain.getCorrectAnswer()
-                      ? Icon(
-                          Icons.check,
-                          color: Colors.green,
-                        )
-                      : Icon(
-                          Icons.close,
-                          color: Colors.red,
-                        ));
-
-                  quizBrain.nextQuestion();
+                  checkAnswer(true);
                 });
               },
             ),
@@ -102,17 +141,7 @@ class _QuizPageState extends State<QuizPage> {
               onPressed: () {
                 //The user picked false.
                 setState(() {
-                  scoreKeeper.add(!quizBrain.getCorrectAnswer()
-                      ? Icon(
-                          Icons.check,
-                          color: Colors.green,
-                        )
-                      : Icon(
-                          Icons.close,
-                          color: Colors.red,
-                        ));
-
-                  quizBrain.nextQuestion();
+                  checkAnswer(false);
                 });
               },
             ),
